@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ObjekWisataModel;
 use App\Models\PemesananModel;
-use App\Models\PenggunaModel;
+// use App\Models\PenggunaModel;
 use Illuminate\Http\Request;
 
 class PemesananController extends Controller
@@ -21,12 +21,10 @@ class PemesananController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request, string $id)
     {
-        $pemesanan = PemesananModel::all();
-        $pengguna = PenggunaModel::all();
-        $objek = ObjekWisataModel::all();
-        return view('pemesanan.index', compact('pemesanan', 'objek', 'pengguna'));
+        $objek = ObjekWisataModel::findOrFail($id);
+        return view('pemesanan.create', compact('objek'));
     }
 
     /**

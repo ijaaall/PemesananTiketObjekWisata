@@ -28,7 +28,6 @@ Route::middleware(['auth:pengguna'])->group(function () {
         if (session('role') === 'admin') {
             return view('dashboard.admin');
         }
-
         return view('dashboard.user');
     });
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
