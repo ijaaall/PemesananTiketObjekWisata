@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ObjekWisataController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Middleware\CekRole;
+use App\Models\ObjekWisataModel;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,11 +30,19 @@ Route::middleware(['auth:pengguna'])->group(function () {
         if (session('role') === 'admin') {
             return view('dashboard.admin');
         }
-        return view('dashboard.user');
-    });
+
+        $objek = ObjekWisataModel::all();
+        return view('dashboard.user', compact('objek'));
+    })->name('/dashboard');
+
+    Route::get('/pemesanan/create/{id}', [PemesananController::class, 'create'])->name('pemesanan.create');
+    Route::post('/pemesanan/store', [PemesananController::class, 'store'])->name('pemesanan.store');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::resource('/pengguna', PenggunaController::class);
-    Route::resource('/objek', ObjekWisataController::class);
-    Route::resource('/pemesanan', PemesananController::class);
+    Route::middleware([CekRole::class])->group(function () {
+        Route::resource('/pengguna', PenggunaController::class);
+        Route::resource('/objek', ObjekWisataController::class);
+        Route::resource('/pemesanan', PemesananController::class)->except('create', 'store');
+    });
 });

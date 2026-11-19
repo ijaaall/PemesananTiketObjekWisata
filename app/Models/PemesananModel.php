@@ -13,7 +13,6 @@ class PemesananModel extends Model
     protected $fillable = [
         'id_pengguna',
         'id_objek',
-        'nama_pemesan',
         'jumlah',
         'tanggal_tiket',
         'jumlah_harga',

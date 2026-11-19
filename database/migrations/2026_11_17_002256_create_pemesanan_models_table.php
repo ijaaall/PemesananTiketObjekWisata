@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id('id_pemesanan');
             $table->foreignId('id_pengguna');
             $table->foreignId('id_objek');
-            $table->string('nama_pemesan');
             $table->integer('jumlah');
             $table->date('tanggal_tiket');
             $table->double('jumlah_harga');

@@ -32,8 +32,36 @@ class PemesananController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'id_pengguna'   => 'required',
+            'id_objek'      => 'required',
+            'jumlah'        => 'required|integer|min:1',
+            'tanggal_tiket' => 'required|date',
+        ]);
+
+        $objek = ObjekWisataModel::findOrFail($request->id_objek);
+
+        if ($request->jumlah > $objek->stok) {
+            return back()
+                ->withErrors(['jumlah' => 'Stok tiket tidak mencukupi! Sisa stok saat ini: ' . $objek->stok])
+                ->withInput();
+        }
+
+        $totalHarga = $objek->harga * $request->jumlah;
+
+        PemesananModel::create([
+            'id_pengguna'   => $request->id_pengguna,
+            'id_objek'      => $request->id_objek,
+            'jumlah'        => $request->jumlah,
+            'tanggal_tiket' => $request->tanggal_tiket,
+            'jumlah_harga'  => $totalHarga,
+        ]);
+
+        $objek->decrement('stok', $request->jumlah);
+
+        return redirect('/dashboard')->with('success', 'Pemesanan berhasil dibuat dan stok tiket telah diperbarui.');
     }
+
 
     /**
      * Display the specified resource.
